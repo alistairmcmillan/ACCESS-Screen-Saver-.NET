@@ -12,13 +12,17 @@ namespace AlistairMcMillan.ACCESSScreenSaver
     partial class ScreenSaverForm : Form
     {
         static Timer myTimer = new Timer();
+
+        // Set starting opacities for images (starts with "trust" onscreen, "excel" about to appear, the others off screen)
         float excelOpacity = 0.0f;
-        bool increasingExcelOpacity = true;
         float communicationOpacity = -4.0f;
-        bool increasingCommunicationOpacity = true;
         float innovationOpacity = -3.0f;
-        bool increasingInnovationOpacity = false;
         float trustOpacity = 1.0f;
+
+        // Set direction of fading (starts with "excel" and "communication" fading in and "innovation" and "trust" fading out)
+        bool increasingExcelOpacity = true;
+        bool increasingCommunicationOpacity = true;
+        bool increasingInnovationOpacity = false;
         bool increasingTrustOpacity = false;
 
         // Keep track of whether the screensaver has become active.
@@ -26,10 +30,6 @@ namespace AlistairMcMillan.ACCESSScreenSaver
 
         // Keep track of the location of the mouse
         private Point mouseLocation;
-
-        // Keep track if FeedView and ItemsView should be shown
-        private bool isFeedViewShown;
-        private bool isItemsViewShown;
 
         public ScreenSaverForm()
             : this(false)
@@ -95,16 +95,7 @@ namespace AlistairMcMillan.ACCESSScreenSaver
 
         private void ScreenSaverForm_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == (Keys.RButton | Keys.ShiftKey))
-            { ;} // capture the Alt keypress
-            else if (e.KeyCode == Keys.F && e.Alt)
-                isFeedViewShown = !isFeedViewShown;
-            else if (e.KeyCode == Keys.I && e.Alt)
-                isItemsViewShown = !isItemsViewShown;
-            else //if(e.KeyCode == Keys.Escape)
-                Close();
-
-            this.Refresh();
+            Close();
         }
 
         private void ScreenSaverForm_MouseDown(object sender, MouseEventArgs e)
@@ -114,7 +105,6 @@ namespace AlistairMcMillan.ACCESSScreenSaver
 
         protected override void OnPaintBackground(PaintEventArgs e)
         {
-            Console.WriteLine("Draw background");
             // Draw the current background image stretched to fill the full screen
             Image backgroundImage = (Image)Resources.ResourceManager.GetObject("background");
             if (backgroundImage != null && e != null)
@@ -125,17 +115,14 @@ namespace AlistairMcMillan.ACCESSScreenSaver
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            Console.WriteLine("Draw logo");
-
+            // Compare size of background image and screen size to determine ratio for scaling other images
             Image backgroundImage = (Image)Resources.ResourceManager.GetObject("background");
-
             float ratio = (float)Size.Height / (float)backgroundImage.Height;
 
             ColorMatrix matrix = new ColorMatrix();
             ImageAttributes attributes = new ImageAttributes();
-
             try {
-                // Draw logo
+                // Draw company logo
                 Image accessImage = (Image)Resources.ResourceManager.GetObject("ACCESS");
                 if (accessImage != null && e != null)
                 {
@@ -143,7 +130,7 @@ namespace AlistairMcMillan.ACCESSScreenSaver
                     float dstHeight = dstWidth * ((float)accessImage.Size.Height / (float)accessImage.Size.Width);
                     e.Graphics.DrawImage(accessImage, 
                         Size.Width - dstWidth - (Size.Height / 20), 
-                        (Size.Height /20), // Size.Height - dstHeight - (Size.Height / 20), 
+                        (Size.Height /20),
                         dstWidth, 
                         dstHeight);
                 }
@@ -154,7 +141,7 @@ namespace AlistairMcMillan.ACCESSScreenSaver
                 {
                     float dstWidth = excelImage.Width * ratio * (float)0.9;
                     float dstHeight = excelImage.Height * ratio * (float)0.9;
-                    matrix.Matrix33 = excelOpacity; //opacity
+                    matrix.Matrix33 = excelOpacity;
                     attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
                     Rectangle destRect = new Rectangle((int)(Size.Width / 2 - dstWidth / 2), (int)(Size.Height / 2 - dstHeight / 2), (int)dstWidth, (int)dstHeight);
                     e.Graphics.DrawImage(excelImage, destRect, 0, 0, excelImage.Width, excelImage.Height, GraphicsUnit.Pixel, attributes);
@@ -166,7 +153,7 @@ namespace AlistairMcMillan.ACCESSScreenSaver
                 {
                     float dstWidth = communicationImage.Width * ratio * (float)0.9;
                     float dstHeight = communicationImage.Height * ratio * (float)0.9;
-                    matrix.Matrix33 = communicationOpacity; //opacity
+                    matrix.Matrix33 = communicationOpacity;
                     attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
                     Rectangle destRect = new Rectangle((int)(Size.Width / 2 - dstWidth / 2), (int)(Size.Height / 2 - dstHeight / 2), (int)dstWidth, (int)dstHeight);
                     e.Graphics.DrawImage(communicationImage, destRect, 0, 0, communicationImage.Width, communicationImage.Height, GraphicsUnit.Pixel, attributes);
@@ -178,7 +165,7 @@ namespace AlistairMcMillan.ACCESSScreenSaver
                 {
                     float dstWidth = innovationImage.Width * ratio * (float)0.9;
                     float dstHeight = innovationImage.Height * ratio * (float)0.9;
-                    matrix.Matrix33 = innovationOpacity; //opacity
+                    matrix.Matrix33 = innovationOpacity;
                     attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
                     Rectangle destRect = new Rectangle((int)(Size.Width / 2 - dstWidth / 2), (int)(Size.Height / 2 - dstHeight / 2), (int)dstWidth, (int)dstHeight);
                     e.Graphics.DrawImage(innovationImage, destRect, 0, 0, innovationImage.Width, innovationImage.Height, GraphicsUnit.Pixel, attributes);
@@ -190,7 +177,7 @@ namespace AlistairMcMillan.ACCESSScreenSaver
                 {
                     float dstWidth = trustImage.Width * ratio * (float)0.9;
                     float dstHeight = trustImage.Height * ratio * (float)0.9;
-                    matrix.Matrix33 = trustOpacity; //opacity
+                    matrix.Matrix33 = trustOpacity;
                     attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
                     Rectangle destRect = new Rectangle((int)(Size.Width / 2 - dstWidth / 2), (int)(Size.Height / 2 - dstHeight / 2), (int)dstWidth, (int)dstHeight);
                     e.Graphics.DrawImage(trustImage, destRect, 0, 0, trustImage.Width, trustImage.Height, GraphicsUnit.Pixel, attributes);
